@@ -7,6 +7,7 @@ import { ActiveSubstance } from "./active-substance.entity";
 
 @Entity({ name: "trade_names" })
 export class TradeName extends NameDescriptionMixin(BaseMixin()) {
+	@ApiProperty({ description: "Country of origin for the drug" })
 	@Column({ type: "varchar", length: 255 })
 	originCountry: string;
 
