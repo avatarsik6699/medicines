@@ -5,9 +5,9 @@ import { Repository } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { Pharmacy } from "../entities/pharmacy.entity";
 import { plainToClass } from "class-transformer";
-import { AddressDto } from "../dto/address.dto";
-import { ContactDto } from "../dto/contact.dto";
-import { WorkingHoursDto } from "../dto/woking-hours.dto";
+import { AddressDto } from "../dtos/address.dto";
+import { ContactDto } from "../dtos/contact.dto";
+import { WorkingHoursDto } from "../dtos/woking-hours.dto";
 
 @Injectable()
 export class PharmacyFactory extends BaseFactory<Pharmacy> {

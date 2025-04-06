@@ -7,6 +7,14 @@ import { faker } from "@faker-js/faker";
 
 @Injectable()
 export class PharmacologicalGroupFactory extends BaseFactory<PharmacologicalGroup> {
+	public readonly defaultNames = [
+		"Анальгетики",
+		"Антибиотики",
+		"Антигистаминные препараты",
+		"Противовоспалительные препараты",
+		"Витамины",
+	];
+
 	constructor(
 		@InjectRepository(PharmacologicalGroup)
 		public readonly repository: Repository<PharmacologicalGroup>
@@ -24,13 +32,7 @@ export class PharmacologicalGroupFactory extends BaseFactory<PharmacologicalGrou
 
 	private getEntity(data?: Partial<PharmacologicalGroup>) {
 		return this.repository.create({
-			name: faker.helpers.arrayElement([
-				"Анальгетики",
-				"Антибиотики",
-				"Антигистаминные препараты",
-				"Противовоспалительные препараты",
-				"Витамины",
-			]),
+			name: faker.helpers.arrayElement(this.defaultNames),
 			description: faker.lorem.sentence(),
 			...data,
 		});

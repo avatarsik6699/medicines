@@ -11,7 +11,7 @@ export function BaseMixin<ClassToExtends extends Types.GenericConstructor>(
 			description: "Unique identifier of the entity",
 		})
 		@PrimaryGeneratedColumn()
-		id: string;
+		id: number;
 
 		@ApiProperty({
 			description: "Create entity date",

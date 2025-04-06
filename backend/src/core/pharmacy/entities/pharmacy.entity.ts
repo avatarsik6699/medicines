@@ -4,10 +4,10 @@ import { ValidateNested } from "class-validator";
 import { BaseMixin } from "src/shared/mixins/base.mixin";
 import { NameDescriptionMixin } from "src/shared/mixins/name-description.mixin";
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
-import { AddressDto } from "../dto/address.dto";
-import { ContactDto } from "../dto/contact.dto";
+import { AddressDto } from "../dtos/address.dto";
+import { ContactDto } from "../dtos/contact.dto";
 import { PharmacyChain } from "./pharmacy-chain.entity";
-import { WorkingHoursDto } from "../dto/woking-hours.dto";
+import { WorkingHoursDto } from "../dtos/woking-hours.dto";
 import { DrugsAvailableInPharmacy } from "./drugs-available-in-pharmacy.entity";
 
 @Entity({ name: "pharmacies" })

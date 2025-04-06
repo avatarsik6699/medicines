@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
-import { CreatePharmacyDto } from "./dto/create-pharmacy.dto";
-import { UpdatePharmacyDto } from "./dto/update-pharmacy.dto";
+import { CreatePharmacyDto } from "./dtos/create-pharmacy.dto";
+import { UpdatePharmacyDto } from "./dtos/update-pharmacy.dto";
 import { PharmacyService } from "./pharmacy.service";
 
 @Controller("pharmacy")
