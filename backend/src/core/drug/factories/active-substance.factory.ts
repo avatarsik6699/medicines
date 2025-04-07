@@ -7,6 +7,14 @@ import { ActiveSubstance } from "src/core/drug/entities/active-substance.entity"
 
 @Injectable()
 export class ActiveSubstanceFactory extends BaseFactory<ActiveSubstance> {
+	public readonly DEFAULT_NAMES = [
+		"Парацетамол",
+		"Ибупрофен",
+		"Амоксициллин",
+		"Цетиризин",
+		"Аскорбиновая кислота",
+	];
+
 	constructor(
 		@InjectRepository(ActiveSubstance)
 		public readonly repository: Repository<ActiveSubstance>
@@ -14,25 +22,15 @@ export class ActiveSubstanceFactory extends BaseFactory<ActiveSubstance> {
 		super(repository);
 	}
 
-	create(data?: Partial<ActiveSubstance>): Promise<ActiveSubstance> {
-		return this.save(this.getEntity(data));
-	}
-
-	createMany(count: number, data?: Partial<ActiveSubstance>): Promise<ActiveSubstance[]> {
-		return this.saveMany(Array.from({ length: count }).map(() => this.getEntity(data)));
-	}
-
-	private getEntity(data?: Partial<ActiveSubstance>) {
+	getEntity(data?: Partial<ActiveSubstance>) {
 		return this.repository.create({
-			name: faker.helpers.arrayElement([
-				"Парацетамол",
-				"Ибупрофен",
-				"Амоксициллин",
-				"Цетиризин",
-				"Аскорбиновая кислота",
-			]),
+			name: this.getRandomName(),
 			description: faker.lorem.sentence(),
 			...data,
 		});
+	}
+
+	private getRandomName() {
+		return `${faker.helpers.arrayElement(this.DEFAULT_NAMES)}-${faker.string.uuid().slice(0, 8)}`;
 	}
 }

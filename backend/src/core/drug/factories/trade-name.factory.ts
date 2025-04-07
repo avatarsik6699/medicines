@@ -7,6 +7,22 @@ import { TradeName } from "src/core/drug/entities/trade-name.entity";
 
 @Injectable()
 export class TradeNameFactory extends BaseFactory<TradeName> {
+	public readonly DEFAULT_NAMES = [
+		"Парацетамол",
+		"Ибупрофен",
+		"Амоксициллин",
+		"Цетиризин",
+		"Аскорбиновая кислота",
+	];
+
+	public readonly DEFAULT_ORIGIN_COUNTRIES = [
+		"Россия",
+		"США",
+		"Великобритания",
+		"Франция",
+		"Германия",
+	];
+
 	constructor(
 		@InjectRepository(TradeName)
 		public readonly repository: Repository<TradeName>
@@ -14,33 +30,21 @@ export class TradeNameFactory extends BaseFactory<TradeName> {
 		super(repository);
 	}
 
-	create(data?: Partial<TradeName>): Promise<TradeName> {
-		return this.save(this.getEntity(data));
-	}
-
-	createMany(count: number, data?: Partial<TradeName>): Promise<TradeName[]> {
-		return this.saveMany(Array.from({ length: count }).map(() => this.getEntity(data)));
-	}
-
-	private getEntity(data?: Partial<TradeName>) {
+	getEntity(data?: Partial<TradeName>) {
 		return this.repository.create({
-			name: faker.helpers.arrayElement([
-				"Парацетамол",
-				"Ибупрофен",
-				"Амоксициллин",
-				"Цетиризин",
-				"Аскорбиновая кислота",
-			]),
+			name: this.getRandomName(),
 			description: faker.lorem.sentence(),
-			originCountry: faker.helpers.arrayElement([
-				"Россия",
-				"США",
-				"Великобритания",
-				"Франция",
-				"Германия",
-			]),
+			originCountry: this.getRandomOriginCountry(),
 			isOriginal: faker.helpers.arrayElement([true, false]),
 			...data,
 		});
+	}
+
+	private getRandomName() {
+		return `${faker.helpers.arrayElement(this.DEFAULT_NAMES)}-${faker.string.uuid().slice(0, 8)}`;
+	}
+
+	private getRandomOriginCountry() {
+		return faker.helpers.arrayElement(this.DEFAULT_ORIGIN_COUNTRIES);
 	}
 }

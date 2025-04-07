@@ -14,7 +14,7 @@
     "start:dev": "cross-env NODE_ENV=dev nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "_typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./src/shared/configs/db/data-source.ts",
+    "_typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./src/shared/configs/db/db.data-source.ts",
     "migration:run": "npm run _typeorm migration:run",
     "migration:generate": "npm run _typeorm migration:generate ./src/shared/configs/db/migrations/migration",
     "migration:create": "npx typeorm migration:create ./src/shared/configs/db/migrations/migration",

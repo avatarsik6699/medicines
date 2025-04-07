@@ -7,6 +7,14 @@ import { Drug } from "src/core/drug/entities/drug.entity";
 
 @Injectable()
 export class DrugFactory extends BaseFactory<Drug> {
+	public readonly DEFAULT_DOSAGES = ["100mg", "200mg", "300mg", "400mg", "500mg"];
+
+	get randomUniqueDosages() {
+		const rawDosages = faker.helpers.arrayElements(this.DEFAULT_DOSAGES);
+
+		return faker.helpers.uniqueArray(rawDosages, rawDosages.length);
+	}
+
 	constructor(
 		@InjectRepository(Drug)
 		public readonly repository: Repository<Drug>
@@ -14,38 +22,14 @@ export class DrugFactory extends BaseFactory<Drug> {
 		super(repository);
 	}
 
-	create(data?: Partial<Drug>): Promise<Drug> {
-		return this.save(this.getEntity(data));
-	}
-
-	createMany(count: number, data?: Partial<Drug>): Promise<Drug[]> {
-		return this.saveMany(
-			faker.helpers.arrayElements(["100mg", "200mg", "300mg", "400mg", "500mg"]).map(dosage =>
-				this.getEntity({
-					...data,
-					dosage,
-				})
-			)
-		);
-	}
-
-	private getEntity(data?: Partial<Drug>) {
+	getEntity(data?: Partial<Drug>) {
 		return this.repository.create({
-			name: faker.helpers.arrayElement([
-				"Парацетамол",
-				"Ибупрофен",
-				"Амоксициллин",
-				"Цетиризин",
-				"Аскорбиновая кислота",
-				"Рибоксин",
-				"Цианокобаламин",
-				"Лазолван",
-				"Рибоксин",
-				"Цианокобаламин",
-				"Лазолван",
-			]),
-			description: faker.lorem.sentence(),
+			dosage: this.getRandomDosage(),
 			...data,
 		});
+	}
+
+	private getRandomDosage() {
+		return faker.helpers.arrayElement(this.DEFAULT_DOSAGES);
 	}
 }

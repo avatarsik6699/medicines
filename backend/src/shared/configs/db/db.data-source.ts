@@ -13,7 +13,7 @@ export async function dataSourceFactory() {
 	const [{ paths: entities }, { paths: migrations }] = await Promise.all([
 		pathResolver.getPaths({ required: true, patterns: ["**/*.entity{.ts,.js}"] }),
 		pathResolver.getPaths({
-			required: true,
+			required: false,
 			patterns: ["shared/configs/db/migrations/*{.ts,.js}"],
 		}),
 	]);
@@ -31,3 +31,5 @@ export async function dataSourceFactory() {
 		logging: false,
 	});
 }
+
+export const dataSource = dataSourceFactory();

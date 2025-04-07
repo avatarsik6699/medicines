@@ -14,15 +14,7 @@ export class PharmacyChainFactory extends BaseFactory<PharmacyChain> {
 		super(repository);
 	}
 
-	create(data?: Partial<PharmacyChain>): Promise<PharmacyChain> {
-		return this.save(this.getEntity(data));
-	}
-
-	createMany(count: number, data?: Partial<PharmacyChain>): Promise<PharmacyChain[]> {
-		return this.saveMany(Array.from({ length: count }).map(() => this.getEntity(data)));
-	}
-
-	private getEntity(data?: Partial<PharmacyChain>) {
+	getEntity(data?: Partial<PharmacyChain>) {
 		return this.repository.create({
 			name: faker.company.name(),
 			description: faker.lorem.sentence(),

@@ -50,7 +50,7 @@ export class SeedCommand extends CommandRunner {
 		super();
 	}
 
-	async run(passedParams: string[], options: SeedOptions): Promise<void> {
+	async run(_: string[], options: SeedOptions): Promise<void> {
 		const spinner = ora("Starting database seeding...").start();
 
 		try {

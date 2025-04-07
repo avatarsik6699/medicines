@@ -1,13 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { DrugsAvailableInPharmacy } from "src/core/pharmacy/entities/drugs-available-in-pharmacy.entity";
 import { BaseMixin } from "src/shared/mixins/base.mixin";
-import { NameDescriptionMixin } from "src/shared/mixins/name-description.mixin";
 import { Column, Entity, ManyToOne, OneToMany, Unique } from "typeorm";
 import { TradeName } from "./trade-name.entity";
-import { DrugsAvailableInPharmacy } from "src/core/pharmacy/entities/drugs-available-in-pharmacy.entity";
 
 @Entity({ name: "drugs" })
 @Unique("UQ_DRUG_TRADENAME_DOSAGE", ["tradeName", "dosage"])
-export class Drug extends NameDescriptionMixin(BaseMixin()) {
+export class Drug extends BaseMixin() {
 	@ApiProperty({
 		description: "Dosage of the drug (e.g., 500mg, 100ml)",
 		example: "500mg",

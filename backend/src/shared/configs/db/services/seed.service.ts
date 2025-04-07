@@ -62,7 +62,7 @@ export class SeedService {
 	 * @returns Promise<PharmacologicalGroup[]>
 	 */
 	createPharmacologicalGroups(count: number = 5) {
-		return this.pharmacologicalGroupFactory.createMany(count);
+		return this.pharmacologicalGroupFactory.createMany({ count });
 	}
 
 	/**
@@ -78,7 +78,10 @@ export class SeedService {
 		return (
 			await Promise.all(
 				pharmacologicalGroups.map(group =>
-					this.activeSubstanceFactory.createMany(count, { pharmacologicalGroup: group })
+					this.activeSubstanceFactory.createMany({
+						count,
+						dataForEach: { pharmacologicalGroup: group },
+					})
 				)
 			)
 		).flat();
@@ -96,7 +99,7 @@ export class SeedService {
 		return (
 			await Promise.all(
 				activeSubstances.map(activeSubstance =>
-					this.tradeNameFactory.createMany(count, { activeSubstance })
+					this.tradeNameFactory.createMany({ count, dataForEach: { activeSubstance } })
 				)
 			)
 		).flat();
@@ -104,13 +107,20 @@ export class SeedService {
 
 	/**
 	 * Create drugs for trade names
-	 * @param count - Number of drugs to create
+	 * @param tradeNames - Trade names to create drugs for
 	 * @returns Promise<Drug[]>
 	 */
-	async createDrugs(tradeNames: TradeName[], count: number = 2): Promise<Drug[]> {
+	async createDrugs(tradeNames: TradeName[]): Promise<Drug[]> {
 		return (
 			await Promise.all(
-				tradeNames.map(tradeName => this.drugFactory.createMany(count, { tradeName }))
+				tradeNames.map(tradeName =>
+					this.drugFactory.createMany({
+						dataList: this.drugFactory.randomUniqueDosages.map(dosage => ({
+							dosage,
+							tradeName,
+						})),
+					})
+				)
 			)
 		).flat();
 	}
@@ -121,7 +131,7 @@ export class SeedService {
 	 * @returns Promise<PharmacyChain[]>
 	 */
 	async createPharmacyChains(count: number = 5): Promise<PharmacyChain[]> {
-		return this.pharmacyChainFactory.createMany(count);
+		return this.pharmacyChainFactory.createMany({ count });
 	}
 
 	/**
@@ -133,7 +143,7 @@ export class SeedService {
 		return (
 			await Promise.all(
 				pharmacyChains.map(pharmacyChain =>
-					this.pharmacyFactory.createMany(count, { pharmacyChain })
+					this.pharmacyFactory.createMany({ count, dataForEach: { pharmacyChain } })
 				)
 			)
 		).flat();
@@ -155,9 +165,9 @@ export class SeedService {
 				pharmacies
 					.map(pharmacy =>
 						faker.helpers.arrayElements(drugs).map(drug => {
-							return this.drugsAvailableInPharmacyFactory.createMany(count, {
-								pharmacy,
-								drug,
+							return this.drugsAvailableInPharmacyFactory.createMany({
+								count,
+								dataForEach: { pharmacy, drug },
 							});
 						})
 					)

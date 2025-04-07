@@ -61,7 +61,7 @@ describe("PharmacologicalGroupService", () => {
 
 		it("should throw an error if the name is already taken", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
-			const created = await $factory.create();
+			const created = await $factory.createOne();
 
 			const data = {
 				name: created.name,
@@ -80,9 +80,7 @@ describe("PharmacologicalGroupService", () => {
 		it("should return all pharmacological groups", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
 
-			const created = await Promise.all(
-				$factory.defaultNames.slice(0, 3).map(name => $factory.create({ name }))
-			);
+			const created = await $factory.createMany({ count: 3 });
 
 			const found = await $service.findAll();
 
@@ -99,15 +97,15 @@ describe("PharmacologicalGroupService", () => {
 		it("should return a pharmacological group by id", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
 
-			const pharmacologicalGroup = await $factory.create();
+			const created = await $factory.createOne();
 
 			const found = await $service.findOne({
-				id: pharmacologicalGroup.id,
+				id: created.id,
 			});
 
 			expect(found).toBeDefined();
-			expect(found.name).toBe(pharmacologicalGroup.name);
-			expect(found.description).toBe(pharmacologicalGroup.description);
+			expect(found.name).toBe(created.name);
+			expect(found.description).toBe(created.description);
 		});
 
 		it("should throw an error if the pharmacological group is not found", async () => {
@@ -123,7 +121,7 @@ describe("PharmacologicalGroupService", () => {
 		it("should update a pharmacological group", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
 
-			const created = await $factory.create();
+			const created = await $factory.createOne();
 
 			const updated = await $service.update({
 				id: created.id,
@@ -149,9 +147,7 @@ describe("PharmacologicalGroupService", () => {
 		it("should throw an error if the name is already taken", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
 
-			const created = await Promise.all(
-				$factory.defaultNames.slice(0, 2).map(name => $factory.create({ name }))
-			);
+			const created = await $factory.createMany({ count: 2 });
 
 			const dataToUpdateFirstItemWithSecondItemName = {
 				id: created[0].id,
@@ -171,7 +167,7 @@ describe("PharmacologicalGroupService", () => {
 		it("should delete a pharmacological group", async () => {
 			const $factory = $module.getModuleRef().get(PharmacologicalGroupFactory);
 
-			const created = await $factory.create();
+			const created = await $factory.createOne();
 
 			await $service.delete({ id: created.id });
 

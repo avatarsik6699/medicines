@@ -14,18 +14,7 @@ export class DrugsAvailableInPharmacyFactory extends BaseFactory<DrugsAvailableI
 		super(repository);
 	}
 
-	create(data?: Partial<DrugsAvailableInPharmacy>): Promise<DrugsAvailableInPharmacy> {
-		return this.save(this.getEntity(data));
-	}
-
-	createMany(
-		count: number,
-		data?: Partial<DrugsAvailableInPharmacy>
-	): Promise<DrugsAvailableInPharmacy[]> {
-		return this.saveMany(Array.from({ length: count }).map(() => this.getEntity(data)));
-	}
-
-	private getEntity(data?: Partial<DrugsAvailableInPharmacy>) {
+	getEntity(data?: Partial<DrugsAvailableInPharmacy>) {
 		return this.repository.create({
 			price: faker.number.int({ min: 100, max: 1000 }),
 			quantity: faker.number.int({ min: 1, max: 100 }),
