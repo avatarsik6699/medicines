@@ -13,7 +13,7 @@ describe("PharmacologicalGroupService", () => {
 
 	beforeAll(async () => {
 		try {
-			await TestingPostgreSqlDbContainer.start();
+			// await TestingPostgreSqlDbContainer.start();
 
 			$module = await TestingModuleFactory.create({
 				dataSource: TestingPostgreSqlDbContainer.dataSource,
@@ -31,7 +31,7 @@ describe("PharmacologicalGroupService", () => {
 
 	afterAll(async () => {
 		await $module.cleanup();
-		await TestingPostgreSqlDbContainer.stop();
+		// await TestingPostgreSqlDbContainer.stop();
 	});
 
 	beforeEach(async () => {
@@ -182,4 +182,6 @@ describe("PharmacologicalGroupService", () => {
 			}).rejects.toThrow(new NotFoundException("Pharmacological group not found"));
 		});
 	});
+
+
 });
