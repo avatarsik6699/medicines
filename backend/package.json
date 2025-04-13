@@ -23,7 +23,7 @@
     "db:drop": "npm run _typeorm schema:drop",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "cross-env NODE_ENV=cli jest --config jest.config.ts --runInBand",
-    "test:container": "cross-env NODE_ENV=cli jest --runInBand",
+    "test:container": "cross-env NODE_ENV=cli jest --config jest.config.ts --runInBand",
     "test:container:debug": "cross-env NODE_ENV=cli DEBUG=testcontainers* jest --verbose",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -84,30 +84,5 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
-  },
-  "jest": {
-    "testTimeout": 30000,
-    "preset": "ts-jest",
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": ".",
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/src/$1"
-    },
-    "roots": ["<rootDir>/src"],
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "transformIgnorePatterns": [
-      "node_modules/(?!(ora)/)"
-    ],
-    "globalTeardown": "<rootDir>/src/shared/tests/teardown.ts",
-    "globalSetup": "<rootDir>/src/shared/tests/setup.ts",
-    "setupFilesAfterEnv": ["<rootDir>/src/shared/tests/global-hooks-for-every-test.ts"]
   }
 }
