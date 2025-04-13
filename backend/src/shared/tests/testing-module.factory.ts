@@ -1,21 +1,18 @@
-import { Logger, ModuleMetadata } from "@nestjs/common";
+import { Logger, ModuleMetadata, ValidationPipe, ValidationPipeOptions } from "@nestjs/common";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { Test, TestingModule } from "@nestjs/testing";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource, QueryRunner } from "typeorm";
 
 interface TestingModuleOptions extends ModuleMetadata {
-	dataSource: DataSource;
 	config?: {
 		globalPrefix?: string;
 		cors?: boolean;
+		validationPipe?: ValidationPipeOptions;
 	};
 }
 
 export class TestingModuleFactory {
 	private readonly logger = new Logger(TestingModuleFactory.name);
-	private dataSource: DataSource;
-	private queryRunner: QueryRunner;
 
 	private app: NestExpressApplication;
 	private moduleRef: TestingModule;
@@ -28,17 +25,7 @@ export class TestingModuleFactory {
 		return this.moduleRef;
 	}
 
-	getDataSource(): DataSource {
-		return this.dataSource;
-	}
-
-	getQueryRunner(): QueryRunner {
-		return this.queryRunner;
-	}
-
-	private constructor(private readonly options: TestingModuleOptions) {
-		this.dataSource = options.dataSource;
-	}
+	private constructor(private readonly options: TestingModuleOptions) {}
 
 	static create(options: TestingModuleOptions): TestingModuleFactory {
 		return new TestingModuleFactory(options);
@@ -46,19 +33,12 @@ export class TestingModuleFactory {
 
 	async initialize(): Promise<TestingModuleFactory> {
 		try {
-			const {
-				imports = [],
-				providers = [],
-				controllers = [],
-				dataSource,
-				config = {},
-			} = this.options;
+			const { imports = [], providers = [], controllers = [], config = {} } = this.options;
 
 			this.moduleRef = await Test.createTestingModule({
 				imports: [
 					TypeOrmModule.forRootAsync({
-						useFactory: () => dataSource.options,
-						dataSourceFactory: () => Promise.resolve(dataSource),
+						useFactory: () => $db.dataSource.options,
 					}),
 					...imports,
 				],
@@ -74,6 +54,10 @@ export class TestingModuleFactory {
 
 			if (config.cors) {
 				this.app.enableCors();
+			}
+
+			if (config.validationPipe) {
+				this.app.useGlobalPipes(new ValidationPipe(config.validationPipe));
 			}
 
 			await this.app.init();
@@ -92,42 +76,8 @@ export class TestingModuleFactory {
 		return this;
 	}
 
-	async startTransaction(): Promise<void> {
-		this.queryRunner = this.dataSource.createQueryRunner();
-		await this.queryRunner.connect();
-		await this.queryRunner.startTransaction();
-
-		this.logger.debug("Transaction started");
-	}
-
-	async commitTransaction(): Promise<void> {
-		if (!this.queryRunner) {
-			throw new Error("Transaction not started");
-		}
-
-		await this.queryRunner.commitTransaction();
-		await this.queryRunner.release();
-
-		this.logger.debug("Transaction committed");
-	}
-
-	async rollbackTransaction(): Promise<void> {
-		if (!this.queryRunner) {
-			throw new Error("Transaction not started");
-		}
-
-		await this.queryRunner.rollbackTransaction();
-		await this.queryRunner.release();
-
-		this.logger.debug("Transaction rolled back");
-	}
-
-	async cleanup(): Promise<void> {
+	async destroy(): Promise<void> {
 		try {
-			if (this.queryRunner?.isTransactionActive) {
-				await this.rollbackTransaction();
-			}
-
 			await this.app.close();
 
 			this.logger.log("Test module cleaned up successfully");
@@ -136,24 +86,6 @@ export class TestingModuleFactory {
 				this.logger.error("Failed to cleanup test module", error?.stack);
 			} else {
 				this.logger.error("Failed to cleanup test module", error);
-			}
-
-			throw error;
-		}
-	}
-
-	async truncateDatabase(): Promise<void> {
-		try {
-			const entities = this.dataSource.entityMetadatas;
-			const tableNames = entities.map(entity => `"${entity.tableName}"`).join(", ");
-
-			await this.dataSource.query(`TRUNCATE TABLE ${tableNames} CASCADE;`);
-			this.logger.log(`Database truncated (${entities.length} tables)`);
-		} catch (error) {
-			if (error instanceof Error) {
-				this.logger.error("Failed to truncate database", error?.stack);
-			} else {
-				this.logger.error("Failed to truncate database", error);
 			}
 
 			throw error;

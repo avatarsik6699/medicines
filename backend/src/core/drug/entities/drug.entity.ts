@@ -3,7 +3,7 @@ import { DrugsAvailableInPharmacy } from "src/core/pharmacy/entities/drugs-avail
 import { BaseMixin } from "src/shared/mixins/base.mixin";
 import { Column, Entity, ManyToOne, OneToMany, Unique } from "typeorm";
 import { TradeName } from "./trade-name.entity";
-
+import { IsNotEmpty, IsString } from "class-validator";
 @Entity({ name: "drugs" })
 @Unique("UQ_DRUG_TRADENAME_DOSAGE", ["tradeName", "dosage"])
 export class Drug extends BaseMixin() {
@@ -14,6 +14,8 @@ export class Drug extends BaseMixin() {
 		maxLength: 120,
 	})
 	@Column({ type: "varchar", length: 120 })
+	@IsNotEmpty()
+	@IsString()
 	dosage: string;
 
 	@ApiProperty({

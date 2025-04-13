@@ -13,9 +13,9 @@ export function NameDescriptionMixin<ClassToExtends extends Types.GenericConstru
 			minLength: 1,
 			maxLength: 255,
 		})
-		@Column({ type: "varchar", length: 255, unique: true })
 		@IsString()
 		@IsNotEmpty()
+		@Column({ type: "varchar", length: 255, unique: true })
 		name: string;
 
 		@ApiProperty({
@@ -26,9 +26,9 @@ export function NameDescriptionMixin<ClassToExtends extends Types.GenericConstru
 			minLength: 1,
 			maxLength: 255,
 		})
-		@Column({ type: "text", nullable: true })
 		@IsString()
 		@IsOptional()
+		@Column({ type: "text", nullable: true })
 		description: string | null;
 	}
 

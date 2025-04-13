@@ -1,15 +1,14 @@
-import { TestingPostgreSqlDbContainer } from "src/shared/tests/testing-postgresql-db.container";
-import { PharmacologicalGroupService } from "../services/pharmacological-group.service";
-import { TestingModuleFactory } from "src/shared/tests/testing-module.factory";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { PharmacologicalGroup } from "../entities/pharmacological-group.entity";
-import { PharmacologicalGroupFactory } from "../factories/pharmacological-group.factory";
-import { PharmacologicalGroupController } from "../controllers/pharmacological-group.controller";
-import * as request from "supertest";
-import { PharmacologicalGroupDto as Dto } from "../dtos/pharmacological-group.dto";
-import { Types } from "src/shared/types";
 import { BadRequestException, HttpStatus } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { Server } from "http";
+import { TestingModuleFactory } from "src/shared/tests/testing-module.factory";
+import { Types } from "src/shared/types";
+import * as request from "supertest";
+import { PharmacologicalGroupController } from "../../controllers/pharmacological-group.controller";
+import { PharmacologicalGroupDto as Dto } from "../../dtos/pharmacological-group.dto";
+import { PharmacologicalGroup } from "../../entities/pharmacological-group.entity";
+import { PharmacologicalGroupFactory } from "../../factories/pharmacological-group.factory";
+import { PharmacologicalGroupService } from "../../services/pharmacological-group.service";
 
 describe("PharmacologicalGroupController", () => {
 	let $module: TestingModuleFactory;
@@ -17,15 +16,14 @@ describe("PharmacologicalGroupController", () => {
 
 	beforeAll(async () => {
 		try {
-			// await TestingPostgreSqlDbContainer.start();
-
 			$module = await TestingModuleFactory.create({
-				dataSource: TestingPostgreSqlDbContainer.dataSource,
 				imports: [TypeOrmModule.forFeature([PharmacologicalGroup])],
 				controllers: [PharmacologicalGroupController],
 				providers: [PharmacologicalGroupService, PharmacologicalGroupFactory],
 				config: { globalPrefix: "api", validationPipe: { whitelist: true, transform: true } },
 			}).initialize();
+
+			$server = $module.getApp().getHttpServer();
 		} catch (error) {
 			console.log(error);
 
@@ -34,13 +32,7 @@ describe("PharmacologicalGroupController", () => {
 	});
 
 	afterAll(async () => {
-		await $module.cleanup();
-		// await TestingPostgreSqlDbContainer.stop();
-	});
-
-	beforeEach(async () => {
-		await TestingPostgreSqlDbContainer.cleanDatabase();
-		$server = $module.getApp().getHttpServer();
+		await $module.destroy();
 	});
 
 	describe("[POST][create] /pharmacological-group", () => {

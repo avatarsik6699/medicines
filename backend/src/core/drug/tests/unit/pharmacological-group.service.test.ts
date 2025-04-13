@@ -1,10 +1,9 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TestingModuleFactory } from "src/shared/tests/testing-module.factory";
-import { TestingPostgreSqlDbContainer } from "src/shared/tests/testing-postgresql-db.container";
-import { PharmacologicalGroup } from "../entities/pharmacological-group.entity";
-import { PharmacologicalGroupService } from "../services/pharmacological-group.service";
+import { PharmacologicalGroup } from "../../entities/pharmacological-group.entity";
+import { PharmacologicalGroupService } from "../../services/pharmacological-group.service";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
-import { PharmacologicalGroupFactory } from "../factories/pharmacological-group.factory";
+import { PharmacologicalGroupFactory } from "../../factories/pharmacological-group.factory";
 import { faker } from "@faker-js/faker/.";
 
 describe("PharmacologicalGroupService", () => {
@@ -13,10 +12,7 @@ describe("PharmacologicalGroupService", () => {
 
 	beforeAll(async () => {
 		try {
-			// await TestingPostgreSqlDbContainer.start();
-
 			$module = await TestingModuleFactory.create({
-				dataSource: TestingPostgreSqlDbContainer.dataSource,
 				imports: [TypeOrmModule.forFeature([PharmacologicalGroup])],
 				providers: [PharmacologicalGroupService, PharmacologicalGroupFactory],
 			}).initialize();
@@ -30,12 +26,7 @@ describe("PharmacologicalGroupService", () => {
 	});
 
 	afterAll(async () => {
-		await $module.cleanup();
-		// await TestingPostgreSqlDbContainer.stop();
-	});
-
-	beforeEach(async () => {
-		await TestingPostgreSqlDbContainer.cleanDatabase();
+		await $module.destroy();
 	});
 
 	describe("create", () => {
@@ -182,6 +173,4 @@ describe("PharmacologicalGroupService", () => {
 			}).rejects.toThrow(new NotFoundException("Pharmacological group not found"));
 		});
 	});
-
-
 });
