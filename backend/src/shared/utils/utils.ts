@@ -1,1 +1,1 @@
-export { PathResolver } from "./path-resolver";
+export { PathResolver } from "./common/path-resolver";

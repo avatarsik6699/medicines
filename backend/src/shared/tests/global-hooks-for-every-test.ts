@@ -1,3 +1,3 @@
-beforeEach(async () => {
+afterEach(async () => {
 	await $db.resetDatabase();
 });

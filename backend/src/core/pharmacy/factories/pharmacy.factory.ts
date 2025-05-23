@@ -18,7 +18,11 @@ export class PharmacyFactory extends BaseFactory<Pharmacy> {
 		super(repository);
 	}
 
-	getEntity(data?: Partial<Pharmacy>) {
+	getEntity(data: Partial<Pharmacy> = {}) {
+		if (!data.pharmacyChain) {
+			throw new Error("Pharmacy chain is required");
+		}
+
 		return this.repository.create({
 			name: faker.company.name(),
 			description: faker.lorem.sentence(),
@@ -51,7 +55,7 @@ export class PharmacyFactory extends BaseFactory<Pharmacy> {
 	private getRandomAddress() {
 		return plainToClass(AddressDto, {
 			region: faker.location.country(),
-			city: faker.location.city(),
+			district: faker.location.state(),
 			street: faker.location.streetAddress(),
 			metro: faker.location.state(),
 			postalCode: faker.location.zipCode(),

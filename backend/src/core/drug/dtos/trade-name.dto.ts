@@ -1,5 +1,7 @@
-import { ApiSchema, IntersectionType, PartialType, PickType } from "@nestjs/swagger";
+import { ApiProperty, ApiSchema, IntersectionType, PartialType, PickType } from "@nestjs/swagger";
 import { TradeName } from "../entities/trade-name.entity";
+import { IsNotEmpty, IsNumber, IsOptional, IsBoolean, IsString } from "class-validator";
+import { PaginationDto } from "src/shared/features/pagination/pagionation.dto";
 
 export namespace TradeNameDto {
 	export namespace FindAll {
@@ -41,7 +43,23 @@ export namespace TradeNameDto {
 			"originCountry",
 			"isOriginal",
 		]) {
+			@ApiProperty({
+				description: "The active substance id",
+				example: 1,
+				type: Number,
+			})
+			@IsNotEmpty()
+			@IsNumber()
 			activeSubstanceId: TradeName["activeSubstance"]["id"];
+
+			@ApiProperty({
+				description: "Is the drug with trade name original",
+				example: true,
+				type: Boolean,
+			})
+			@IsOptional()
+			@IsBoolean()
+			isOriginal: boolean | null = null;
 		}
 	}
 
@@ -60,7 +78,24 @@ export namespace TradeNameDto {
 			PickType(TradeName, ["id"]),
 			PartialType(PickType(TradeName, ["name", "description", "originCountry", "isOriginal"]))
 		) {
+			@ApiProperty({
+				description: "The active substance id",
+				example: 1,
+				type: Number,
+				required: false,
+			})
+			@IsOptional()
+			@IsNumber()
 			activeSubstanceId?: TradeName["activeSubstance"]["id"];
+
+			@ApiProperty({
+				description: "Is the drug with trade name original",
+				example: true,
+				type: Boolean,
+			})
+			@IsBoolean()
+			@IsOptional()
+			isOriginal?: boolean | null = null;
 		}
 	}
 
@@ -70,5 +105,34 @@ export namespace TradeNameDto {
 			description: "The trade name to delete",
 		})
 		export class Params extends PickType(TradeName, ["id"]) {}
+	}
+
+	export namespace GetTradeNameSuggestions {
+		@ApiSchema({
+			name: "TradeNameDtoGetTradeNameSuggestionsQuery",
+			description: "The trade name to get suggestions",
+		})
+		export class Query extends PaginationDto.Query {}
+
+		@ApiSchema({
+			name: "TradeNameDtoGetTradeNameSuggestionsParams",
+			description: "The trade name to get suggestions",
+		})
+		export class Params {
+			@ApiProperty({
+				description: "The trade name to get suggestions",
+				example: "Paracetamol",
+				type: String,
+			})
+			@IsNotEmpty()
+			@IsString()
+			tradeName: TradeName["name"];
+		}
+
+		@ApiSchema({
+			name: "TradeNameDtoGetTradeNameSuggestionsResponse",
+			description: "The trade name to get suggestions",
+		})
+		export class Response extends PaginationDto.Response<TradeName> {}
 	}
 }

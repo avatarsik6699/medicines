@@ -22,7 +22,11 @@ export class ActiveSubstanceFactory extends BaseFactory<ActiveSubstance> {
 		super(repository);
 	}
 
-	getEntity(data?: Partial<ActiveSubstance>) {
+	getEntity(data: Partial<ActiveSubstance> = {}) {
+		if (!data.pharmacologicalGroup) {
+			throw new Error("Pharmacological group is required");
+		}
+
 		return this.repository.create({
 			name: this.getRandomName(),
 			description: faker.lorem.sentence(),

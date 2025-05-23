@@ -1,19 +1,13 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { CoreModule } from "./core/core.module";
-import { dataSourceFactory } from "./shared/configs/db/db.data-source";
-import { envsFactoryMapper } from "./shared/configs/envs-factory-mapper";
-import { DatabaseModule } from "./shared/configs/db/db.module";
+import { DatabaseModule } from "./shared/setup/db/db.module";
 import { ScrapingModule } from "./scraping/scrapping.module";
+import { AppController } from "./app.controller";
+import { SeedModule } from "./shared/features/seed/seed.module";
+import { CoreModule } from "./core/core.module";
+import { EnvConfigModule } from "./shared/setup/env-config/env-config.module";
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env", load: [envsFactoryMapper] }),
-		TypeOrmModule.forRootAsync({ useFactory: async () => (await dataSourceFactory()).options }),
-		CoreModule,
-		DatabaseModule,
-		ScrapingModule,
-	],
+	controllers: [AppController],
+	imports: [SeedModule, EnvConfigModule, CoreModule, DatabaseModule, ScrapingModule],
 })
 export class AppModule {}

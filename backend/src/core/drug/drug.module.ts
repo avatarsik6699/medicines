@@ -22,5 +22,6 @@ import { ActiveSubstanceController } from "./controllers/active-substance.contro
 		ActiveSubstanceController,
 	],
 	providers: [DrugService, PharmacologicalGroupService, TradeNameService, ActiveSubstanceService],
+	exports: [TypeOrmModule],
 })
 export class DrugModule {}

@@ -8,9 +8,10 @@ import {
 	ApiOperation,
 	ApiCreatedResponse,
 } from "@nestjs/swagger";
-import { Controller, Get, Post, Body, Patch, Delete, Param } from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Delete, Param, Query } from "@nestjs/common";
 import { TradeNameDto as Dto } from "../dtos/trade-name.dto";
 import { TradeNameService } from "../services/trade-name.serivce";
+
 @ApiTags("Trade Name")
 @Controller("trade-name")
 export class TradeNameController {
@@ -56,5 +57,19 @@ export class TradeNameController {
 	@Delete(":id")
 	remove(@Param("id") id: Dto.Delete.Params["id"]): Promise<void> {
 		return this.tradeNameService.delete({ id });
+	}
+
+	@ApiOperation({ summary: "Get trade name suggestions" })
+	@ApiOkResponse({ type: Dto.GetTradeNameSuggestions.Response })
+	@ApiParam({ name: "tradeName", type: String })
+	@Get("suggestions/:tradeName")
+	getTradeNameSuggestions(
+		@Param() params: Dto.GetTradeNameSuggestions.Params,
+		@Query() query: Dto.GetTradeNameSuggestions.Query
+	): Promise<Dto.GetTradeNameSuggestions.Response> {
+		return this.tradeNameService.getTradeNameSuggestions({
+			tradeName: params.tradeName,
+			limit: query.limit,
+		});
 	}
 }

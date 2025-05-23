@@ -14,7 +14,7 @@ export class PharmacyChainFactory extends BaseFactory<PharmacyChain> {
 		super(repository);
 	}
 
-	getEntity(data?: Partial<PharmacyChain>) {
+	getEntity(data: Partial<PharmacyChain> = {}) {
 		return this.repository.create({
 			name: faker.company.name(),
 			description: faker.lorem.sentence(),

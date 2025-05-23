@@ -22,7 +22,11 @@ export class DrugFactory extends BaseFactory<Drug> {
 		super(repository);
 	}
 
-	getEntity(data?: Partial<Drug>) {
+	getEntity(data: Partial<Drug> = {}) {
+		if (!data.tradeName) {
+			throw new Error("Trade name is required");
+		}
+
 		return this.repository.create({
 			dosage: this.getRandomDosage(),
 			...data,

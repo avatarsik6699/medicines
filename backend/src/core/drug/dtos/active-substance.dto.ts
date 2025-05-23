@@ -1,7 +1,7 @@
-import { IntersectionType, PartialType, PickType } from "@nestjs/mapped-types";
+import { IntersectionType, PartialType, PickType } from "@nestjs/swagger";
 import { ActiveSubstance } from "../entities/active-substance.entity";
-import { ApiSchema } from "@nestjs/swagger";
-
+import { ApiSchema, ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 export namespace ActiveSubstanceDto {
 	export namespace Create {
 		@ApiSchema({
@@ -9,6 +9,13 @@ export namespace ActiveSubstanceDto {
 			description: "The active substance to create",
 		})
 		export class Params extends PickType(ActiveSubstance, ["name", "description"]) {
+			@ApiProperty({
+				description: "The pharmacological group id",
+				example: 1,
+				type: Number,
+			})
+			@IsNotEmpty()
+			@IsNumber()
 			pharmacologicalGroupId: ActiveSubstance["pharmacologicalGroup"]["id"];
 		}
 
@@ -50,6 +57,13 @@ export namespace ActiveSubstanceDto {
 			PickType(ActiveSubstance, ["id"]),
 			PartialType(PickType(ActiveSubstance, ["name", "description"]))
 		) {
+			@ApiProperty({
+				description: "The pharmacological group id",
+				example: 1,
+				type: Number,
+			})
+			@IsOptional()
+			@IsNumber()
 			pharmacologicalGroupId?: ActiveSubstance["pharmacologicalGroup"]["id"];
 		}
 

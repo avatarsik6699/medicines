@@ -30,7 +30,11 @@ export class TradeNameFactory extends BaseFactory<TradeName> {
 		super(repository);
 	}
 
-	getEntity(data?: Partial<TradeName>) {
+	getEntity(data: Partial<TradeName> = {}) {
+		if (!data.activeSubstance) {
+			throw new Error("Active substance is required");
+		}
+
 		return this.repository.create({
 			name: this.getRandomName(),
 			description: faker.lorem.sentence(),

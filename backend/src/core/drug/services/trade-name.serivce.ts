@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { TradeNameDto as Dto } from "../dtos/trade-name.dto";
 import { NotFoundException, Injectable } from "@nestjs/common";
 import { ActiveSubstance } from "../entities/active-substance.entity";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class TradeNameService {
@@ -40,13 +41,13 @@ export class TradeNameService {
 		}
 
 		return this.tradeNameRepository.save({
-			...params,
 			activeSubstance,
+			...params,
 		});
 	}
 
 	async update({ activeSubstanceId, ...params }: Dto.Update.Params): Promise<Dto.Update.Response> {
-		const tradeName = await this.findOne(params);
+		const tradeName = await this.findOne({ id: params.id });
 
 		if (activeSubstanceId) {
 			const activeSubstance = await this.activeSubstanceRepository.findOne({
@@ -60,15 +61,46 @@ export class TradeNameService {
 			tradeName.activeSubstance = activeSubstance;
 		}
 
-		return this.tradeNameRepository.save({
-			...tradeName,
-			...params,
-		});
+		return this.tradeNameRepository
+			.createQueryBuilder()
+			.update(TradeName, {
+				...params,
+				...(activeSubstanceId && { activeSubstance: tradeName.activeSubstance }),
+			})
+			.where("id = :id", { id: tradeName.id })
+			.returning("*")
+			.execute()
+			.then(({ raw: tradeName }) =>
+				Array.isArray(tradeName)
+					? plainToInstance(TradeName, tradeName[0])
+					: plainToInstance(TradeName, tradeName)
+			);
 	}
 
 	async delete(params: Dto.Delete.Params): Promise<void> {
 		const tradeName = await this.findOne(params);
 
 		await this.tradeNameRepository.delete(tradeName.id);
+	}
+
+	async getTradeNameSuggestions(
+		args: Dto.GetTradeNameSuggestions.Params & Dto.GetTradeNameSuggestions.Query
+	): Promise<Dto.GetTradeNameSuggestions.Response> {
+		const sql = this.tradeNameRepository.createQueryBuilder("trade_name");
+
+		sql
+			.where("trade_name.name ILIKE :name", { name: `%${args.tradeName}%` })
+			.orderBy("trade_name.name", "ASC")
+			.take(args.limit);
+
+		const [tradeNames, total] = await sql.getManyAndCount();
+
+		return {
+			items: tradeNames,
+			total,
+			limit: args.limit,
+			// TODO: temporary unusable, because the pagination is not implemented yet
+			page: 1,
+		};
 	}
 }

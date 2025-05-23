@@ -12,11 +12,11 @@ export class AddressDto {
 
 	@IsString()
 	@ApiProperty({
-		description: "City name",
-		example: "Moscow",
+		description: "District name",
+		example: "Tverskoy",
 		required: true,
 	})
-	city: string;
+	district: string;
 
 	@IsString()
 	@ApiProperty({

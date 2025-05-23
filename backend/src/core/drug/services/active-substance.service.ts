@@ -5,6 +5,9 @@ import { ActiveSubstance } from "../entities/active-substance.entity";
 import { ActiveSubstanceDto as Dto } from "../dtos/active-substance.dto";
 import { PharmacologicalGroup } from "../entities/pharmacological-group.entity";
 
+// TODO: add load relation ids to findOne and others for lazy loading
+// Base on lazy param return different response types (with or without relations)
+
 @Injectable()
 export class ActiveSubstanceService {
 	constructor(
@@ -74,8 +77,10 @@ export class ActiveSubstanceService {
 	}
 
 	async delete({ id }: Dto.Delete.Params): Promise<void> {
+		// TODO: dont need throw error if not found, just return null?
 		const activeSubstance = await this.findOne({ id });
 
+		// TODO: need rewrite to use queryBuilder with return deleted entity
 		await this.activeSubstanceRepository.delete(activeSubstance.id);
 	}
 }

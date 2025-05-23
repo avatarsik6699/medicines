@@ -14,10 +14,6 @@ export class PharmacyChain extends NameDescriptionMixin(BaseMixin()) {
 	@Decorators.Database.Column.Link({ description: "website link" })
 	websiteLink: Types.Data.Link;
 
-	@ApiProperty({
-		description: "Pharmacies related to the pharmacy chain",
-		type: () => [Pharmacy],
-	})
 	@OneToMany(() => Pharmacy, ({ pharmacyChain }) => pharmacyChain)
 	pharmacies: Pharmacy[];
 }

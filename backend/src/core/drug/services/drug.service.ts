@@ -21,6 +21,7 @@ export class DrugService {
 	async findOne(params: Dto.FindOne.Params): Promise<Dto.FindOne.Response> {
 		const drug = await this.drugRepository.findOne({
 			where: { id: params.id },
+			relations: ["tradeName"],
 		});
 
 		if (!drug) {
@@ -66,6 +67,14 @@ export class DrugService {
 			}
 
 			drug.tradeName = tradeName;
+		}
+
+		const isDrugWithSameTradeNameAndDosageAlreadyExists = await this.drugRepository.exists({
+			where: { tradeName: { id: drug.tradeName.id }, dosage: params.dosage },
+		});
+
+		if (isDrugWithSameTradeNameAndDosageAlreadyExists) {
+			throw new BadRequestException("Drug with same trade name and dosage already exists");
 		}
 
 		return this.drugRepository.save({ ...drug, ...params });

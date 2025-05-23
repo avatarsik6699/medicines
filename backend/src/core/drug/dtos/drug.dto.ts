@@ -1,6 +1,6 @@
-import { ApiProperty, ApiSchema, IntersectionType, PartialType, PickType } from "@nestjs/swagger";
+import { ApiSchema, IntersectionType, PartialType, PickType } from "@nestjs/swagger";
 import { Drug } from "../entities/drug.entity";
-import { IsNumber, IsOptional, IsNotEmpty } from "class-validator";
+import { Decorators } from "src/shared/decorators";
 
 export namespace DrugDto {
 	export namespace Create {
@@ -9,13 +9,7 @@ export namespace DrugDto {
 			description: "The drug to create",
 		})
 		export class Params extends PickType(Drug, ["dosage"]) {
-			@ApiProperty({
-				description: "The trade name id of the drug",
-				example: 1,
-				type: Number,
-			})
-			@IsNotEmpty()
-			@IsNumber()
+			@Decorators.Fields.Identifier()
 			tradeNameId: Drug["tradeName"]["id"];
 		}
 
@@ -35,13 +29,7 @@ export namespace DrugDto {
 			PickType(Drug, ["id"]),
 			PartialType(PickType(Drug, ["dosage"]))
 		) {
-			@ApiProperty({
-				description: "The trade name id of the drug",
-				example: 1,
-				type: Number,
-			})
-			@IsNumber()
-			@IsOptional()
+			@Decorators.Fields.Identifier({ isOptional: true })
 			tradeNameId?: Drug["tradeName"]["id"];
 		}
 
